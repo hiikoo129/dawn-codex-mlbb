@@ -1,0 +1,272 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isVerified() && request.auth.uid == userId;
+    }
+
+    function isAdmin() {
+      return isVerified() && (
+        request.auth.token.email == 'kintilasem129@gmail.com' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isValidAppConfig(data) {
+      return data.keys().hasAll([
+        'appName',
+        'guideSubtitle',
+        'creatorName',
+        'seasonNumber',
+        'seasonTitle',
+        'seasonResetEpoch',
+        'epicDiamondPrice',
+        'specialDiamondPrice',
+        'legendSeasonPrice',
+        'collectorSeasonPrice',
+        'limitedSeasonPrice',
+        'hintDiamondPrice',
+        'extraTimeDiamondPrice',
+        'updatedAt'
+      ]) && data.keys().hasOnly([
+        'appName',
+        'guideSubtitle',
+        'creatorName',
+        'seasonNumber',
+        'seasonTitle',
+        'seasonResetEpoch',
+        'epicDiamondPrice',
+        'specialDiamondPrice',
+        'legendSeasonPrice',
+        'collectorSeasonPrice',
+        'limitedSeasonPrice',
+        'hintDiamondPrice',
+        'extraTimeDiamondPrice',
+        'updatedAt'
+      ]) &&
+      data.appName is string && data.appName.size() >= 1 && data.appName.size() <= 60 &&
+      data.guideSubtitle is string && data.guideSubtitle.size() >= 1 && data.guideSubtitle.size() <= 120 &&
+      data.creatorName is string && data.creatorName.size() >= 1 && data.creatorName.size() <= 60 &&
+      data.seasonNumber is int && data.seasonNumber >= 1 && data.seasonNumber <= 9999 &&
+      data.seasonTitle is string && data.seasonTitle.size() >= 1 && data.seasonTitle.size() <= 80 &&
+      data.seasonResetEpoch is int && data.seasonResetEpoch >= 1 && data.seasonResetEpoch <= 999999 &&
+      data.epicDiamondPrice is int && data.epicDiamondPrice >= 0 && data.epicDiamondPrice <= 100000 &&
+      data.specialDiamondPrice is int && data.specialDiamondPrice >= 0 && data.specialDiamondPrice <= 100000 &&
+      data.legendSeasonPrice is int && data.legendSeasonPrice >= 0 && data.legendSeasonPrice <= 100000 &&
+      data.collectorSeasonPrice is int && data.collectorSeasonPrice >= 0 && data.collectorSeasonPrice <= 100000 &&
+      data.limitedSeasonPrice is int && data.limitedSeasonPrice >= 0 && data.limitedSeasonPrice <= 100000 &&
+      data.hintDiamondPrice is int && data.hintDiamondPrice >= 0 && data.hintDiamondPrice <= 100000 &&
+      data.extraTimeDiamondPrice is int && data.extraTimeDiamondPrice >= 0 && data.extraTimeDiamondPrice <= 100000 &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll([
+        'uid',
+        'mlbbId',
+        'mlbbZone',
+        'nickname',
+        'accountTier',
+        'accountRole',
+        'diamonds',
+        'seasonPoints',
+        'rankStars',
+        'hintCount',
+        'timeBoostCount',
+        'ownedSkins',
+        'equippedSkinId',
+        'equippedSkinUrl',
+        'ownedBgThemes',
+        'equippedBgTheme',
+        'seasonEpoch',
+        'updatedAt'
+      ]) && data.keys().hasOnly([
+        'uid',
+        'mlbbId',
+        'mlbbZone',
+        'nickname',
+        'accountTier',
+        'accountRole',
+        'diamonds',
+        'seasonPoints',
+        'rankStars',
+        'hintCount',
+        'timeBoostCount',
+        'ownedSkins',
+        'equippedSkinId',
+        'equippedSkinUrl',
+        'ownedBgThemes',
+        'equippedBgTheme',
+        'seasonEpoch',
+        'updatedAt'
+      ]) &&
+      data.uid is string && data.uid == userId && isValidId(data.uid) &&
+      data.mlbbId is string && data.mlbbId.size() <= 32 &&
+      data.mlbbZone is string && data.mlbbZone.size() <= 16 &&
+      data.nickname is string && data.nickname.size() >= 1 && data.nickname.size() <= 60 &&
+      data.accountTier is string && data.accountTier.size() <= 40 &&
+      data.accountRole is string && data.accountRole.size() <= 30 &&
+      data.diamonds is int && data.diamonds >= 0 && data.diamonds <= 1000000 &&
+      data.seasonPoints is int && data.seasonPoints >= 0 && data.seasonPoints <= 1000000 &&
+      data.rankStars is int && data.rankStars >= 0 && data.rankStars <= 10000 &&
+      data.hintCount is int && data.hintCount >= 0 && data.hintCount <= 999 &&
+      data.timeBoostCount is int && data.timeBoostCount >= 0 && data.timeBoostCount <= 999 &&
+      data.ownedSkins is list && data.ownedSkins.size() <= 1200 &&
+      (data.ownedSkins.size() == 0 || data.ownedSkins[0] is string) &&
+      data.equippedSkinId is string && data.equippedSkinId.size() <= 64 &&
+      data.equippedSkinUrl is string && data.equippedSkinUrl.size() <= 512 &&
+      data.ownedBgThemes is list && data.ownedBgThemes.size() <= 30 &&
+      (data.ownedBgThemes.size() == 0 || data.ownedBgThemes[0] is string) &&
+      data.equippedBgTheme is string && data.equippedBgTheme.size() <= 64 &&
+      data.seasonEpoch is int && data.seasonEpoch >= 1 && data.seasonEpoch <= 999999 &&
+      data.updatedAt == request.time;
+    }
+
+    function isValidLeaderboardEntry(data, userId) {
+      return data.keys().hasAll([
+        'uid',
+        'displayName',
+        'mlbbId',
+        'rankStars',
+        'rankLabel',
+        'seasonPoints',
+        'seasonEpoch',
+        'avatarUrl',
+        'updatedAt'
+      ]) && data.keys().hasOnly([
+        'uid',
+        'displayName',
+        'mlbbId',
+        'rankStars',
+        'rankLabel',
+        'seasonPoints',
+        'seasonEpoch',
+        'avatarUrl',
+        'updatedAt'
+      ]) &&
+      data.uid is string && data.uid == userId && isValidId(data.uid) &&
+      data.displayName is string && data.displayName.size() >= 1 && data.displayName.size() <= 60 &&
+      data.mlbbId is string && data.mlbbId.size() <= 32 &&
+      data.rankStars is int && data.rankStars >= 0 && data.rankStars <= 10000 &&
+      data.rankLabel is string && data.rankLabel.size() >= 1 && data.rankLabel.size() <= 60 &&
+      data.seasonPoints is int && data.seasonPoints >= 0 && data.seasonPoints <= 1000000 &&
+      data.seasonEpoch is int && data.seasonEpoch >= 1 && data.seasonEpoch <= 999999 &&
+      data.avatarUrl is string && data.avatarUrl.size() <= 512 &&
+      data.updatedAt == request.time;
+    }
+
+    match /test/connection {
+      allow get: if true;
+    }
+
+    match /admins/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list, write: if false;
+    }
+
+    match /app_config/{configId} {
+      allow get: if isValidId(configId);
+      allow list: if false;
+      allow create: if isValidId(configId) && isAdmin() && isValidAppConfig(incoming());
+      allow update: if isValidId(configId) && isAdmin() && isValidAppConfig(incoming()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly([
+          'appName',
+          'guideSubtitle',
+          'creatorName',
+          'seasonNumber',
+          'seasonTitle',
+          'seasonResetEpoch',
+          'epicDiamondPrice',
+          'specialDiamondPrice',
+          'legendSeasonPrice',
+          'collectorSeasonPrice',
+          'limitedSeasonPrice',
+          'hintDiamondPrice',
+          'extraTimeDiamondPrice',
+          'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if false;
+      allow create: if isValidId(userId) && isOwner(userId) && isValidUserProfile(incoming(), userId);
+      allow update: if isValidId(userId) && (isOwner(userId) || isAdmin()) &&
+        isValidUserProfile(incoming(), userId) &&
+        incoming().uid == existing().uid &&
+        (
+          isAdmin() ||
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'mlbbId',
+            'mlbbZone',
+            'nickname',
+            'accountTier',
+            'accountRole',
+            'diamonds',
+            'seasonPoints',
+            'rankStars',
+            'hintCount',
+            'timeBoostCount',
+            'ownedSkins',
+            'equippedSkinId',
+            'equippedSkinUrl',
+            'ownedBgThemes',
+            'equippedBgTheme',
+            'seasonEpoch',
+            'updatedAt'
+          ])
+        );
+      allow delete: if false;
+    }
+
+    match /leaderboard/{userId} {
+      allow get: if isValidId(userId);
+      allow list: if resource.data.seasonEpoch >= 1;
+      allow create: if isValidId(userId) && (isOwner(userId) || isAdmin()) && isValidLeaderboardEntry(incoming(), userId);
+      allow update: if isValidId(userId) && (isOwner(userId) || isAdmin()) &&
+        isValidLeaderboardEntry(incoming(), userId) &&
+        incoming().uid == existing().uid &&
+        (
+          isAdmin() ||
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'displayName',
+            'mlbbId',
+            'rankStars',
+            'rankLabel',
+            'seasonPoints',
+            'seasonEpoch',
+            'avatarUrl',
+            'updatedAt'
+          ])
+        );
+      allow delete: if isValidId(userId) && (isOwner(userId) || isAdmin());
+    }
+  }
+}

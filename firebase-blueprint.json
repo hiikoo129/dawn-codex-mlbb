@@ -1,0 +1,159 @@
+{
+  "entities": {
+    "AppConfig": {
+      "title": "AppConfig",
+      "description": "Global application branding, custom UI texts, season settings, quiz rewards, and shop prices managed solely by the verified creator.",
+      "type": "object",
+      "properties": {
+        "appName": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "guideSubtitle": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "creatorName": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "globalBannerText": { "type": "string", "maxLength": 200 },
+        "footerText": { "type": "string", "maxLength": 160 },
+        "customHeroesTitle": { "type": "string", "maxLength": 100 },
+        "customHeroesSubtitle": { "type": "string", "maxLength": 180 },
+        "customDraftTitle": { "type": "string", "maxLength": 100 },
+        "customDraftSubtitle": { "type": "string", "maxLength": 180 },
+        "customItemsTitle": { "type": "string", "maxLength": 100 },
+        "customItemsSubtitle": { "type": "string", "maxLength": 180 },
+        "customCalcTitle": { "type": "string", "maxLength": 100 },
+        "customCalcSubtitle": { "type": "string", "maxLength": 180 },
+        "customGameTitle": { "type": "string", "maxLength": 100 },
+        "customProfileTitle": { "type": "string", "maxLength": 100 },
+        "seasonNumber": { "type": "number" },
+        "seasonTitle": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "seasonResetEpoch": { "type": "number" },
+        "epicDiamondPrice": { "type": "number" },
+        "specialDiamondPrice": { "type": "number" },
+        "legendSeasonPrice": { "type": "number" },
+        "collectorSeasonPrice": { "type": "number" },
+        "limitedSeasonPrice": { "type": "number" },
+        "bgDiamondPrice": { "type": "number" },
+        "bgSeasonPrice": { "type": "number" },
+        "hintDiamondPrice": { "type": "number" },
+        "extraTimeDiamondPrice": { "type": "number" },
+        "quizDiamondReward": { "type": "number" },
+        "quizSeasonReward": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "appName",
+        "guideSubtitle",
+        "creatorName",
+        "globalBannerText",
+        "footerText",
+        "customHeroesTitle",
+        "customHeroesSubtitle",
+        "customDraftTitle",
+        "customDraftSubtitle",
+        "customItemsTitle",
+        "customItemsSubtitle",
+        "customCalcTitle",
+        "customCalcSubtitle",
+        "customGameTitle",
+        "customProfileTitle",
+        "seasonNumber",
+        "seasonTitle",
+        "seasonResetEpoch",
+        "epicDiamondPrice",
+        "specialDiamondPrice",
+        "legendSeasonPrice",
+        "collectorSeasonPrice",
+        "limitedSeasonPrice",
+        "bgDiamondPrice",
+        "bgSeasonPrice",
+        "hintDiamondPrice",
+        "extraTimeDiamondPrice",
+        "quizDiamondReward",
+        "quizSeasonReward",
+        "updatedAt"
+      ]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Private player profile, MLBB ID binding, wallet balances, equipped skins, and background themes.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "mlbbId": { "type": "string", "maxLength": 32 },
+        "mlbbZone": { "type": "string", "maxLength": 16 },
+        "nickname": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "accountTier": { "type": "string", "maxLength": 40 },
+        "accountRole": { "type": "string", "maxLength": 30 },
+        "diamonds": { "type": "number" },
+        "seasonPoints": { "type": "number" },
+        "rankStars": { "type": "number" },
+        "hintCount": { "type": "number" },
+        "timeBoostCount": { "type": "number" },
+        "ownedSkins": { "type": "array" },
+        "equippedSkinId": { "type": "string", "maxLength": 64 },
+        "equippedSkinUrl": { "type": "string", "maxLength": 512 },
+        "ownedBgThemes": { "type": "array" },
+        "equippedBgTheme": { "type": "string", "maxLength": 64 },
+        "seasonEpoch": { "type": "number" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "uid",
+        "mlbbId",
+        "mlbbZone",
+        "nickname",
+        "accountTier",
+        "accountRole",
+        "diamonds",
+        "seasonPoints",
+        "rankStars",
+        "hintCount",
+        "timeBoostCount",
+        "ownedSkins",
+        "equippedSkinId",
+        "equippedSkinUrl",
+        "ownedBgThemes",
+        "equippedBgTheme",
+        "seasonEpoch",
+        "updatedAt"
+      ]
+    },
+    "LeaderboardEntry": {
+      "title": "LeaderboardEntry",
+      "description": "Public Top 30 ranked quiz leaderboard entry without PII.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "mlbbId": { "type": "string", "maxLength": 32 },
+        "rankStars": { "type": "number" },
+        "rankLabel": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "seasonPoints": { "type": "number" },
+        "seasonEpoch": { "type": "number" },
+        "avatarUrl": { "type": "string", "maxLength": 512 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "uid",
+        "displayName",
+        "mlbbId",
+        "rankStars",
+        "rankLabel",
+        "seasonPoints",
+        "seasonEpoch",
+        "avatarUrl",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/app_config/{configId}": {
+      "schema": { "$ref": "#/entities/AppConfig" },
+      "description": "Global config document (e.g. /app_config/global) controlled exclusively by the verified creator."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Private player state and inventory isolated to the owner or admin."
+    },
+    "/leaderboard/{userId}": {
+      "schema": { "$ref": "#/entities/LeaderboardEntry" },
+      "description": "Publicly queryable ranked quiz leaderboard entries (no PII)."
+    }
+  }
+}

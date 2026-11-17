@@ -1,0 +1,6 @@
+{
+  "name": "Dawn Codex — Panduan & Kalkulator MLBB",
+  "description": "Panduan lengkap Mobile Legends: ensiklopedia seluruh hero beserta pasif & skill, simulator draft pick 5v5 & counter, direktori item & resep mentahan, serta kalkulator penjumlahan damage hero dan item berbasis Rone Arena API.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
